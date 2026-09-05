@@ -33,7 +33,7 @@ Record only reusable findings. Avoid transcripts, speculation presented as fact,
 - Keep SDK boot and lifecycle ordering. Scenes own their ticker callbacks/display objects and clean them up on exit.
 - Use the design-unit stage and resize hooks instead of hard-coded physical pixel positions.
 - SDK failures must not prevent plain-browser play. Follow the existing save and lifecycle patterns; see CLAUDE.md for details.
-- Traffic mechanics and token balance are not implemented or validated yet. Do not promote proposed mechanics to engineering facts.
+- Superseded by v0.1: traffic mechanics are implemented and covered by model tests. Token values exist provisionally; pacing, difficulty, and enjoyment remain unvalidated by playtesting.
 
 ### Cross-model art workflow
 
@@ -60,3 +60,8 @@ Record only reusable findings. Avoid transcripts, speculation presented as fact,
 - Verified by story integration: narrative copy must not report unmeasured outcomes. Claude's draft required editing before adoption.
 - Proposed, not audio-tested: keep music's shared palette and motif while escalating rhythmic density rather than volume. Preserve space for gameplay cues and evaluate retry fatigue.
 - Proposed, not playtest-proven: recoverable mistakes and short shifts may encourage mastery. Unit tests prove rules, not enjoyment. Household observations should drive the next balance pass.
+## Emergency dispatch verification
+
+- Verified by 18-test suite: ordinary mechanics still work; default no-input shift clears both emergency kinds without crashes; overlapping requests serialize with warnings; next dispatch waits through wreck recovery; closures and same-approach occupancy defer rather than discard emergency requests; restart isolates config and schedule.
+- Browser check: mobile emergency warning visible, pause freezes countdown, automatic crossing completes with no input and no page errors.
+- Shared pattern: safety guarantees belong in dispatch scheduling, not collision immunity. Ordinary player-controlled traffic can still hit an emergency vehicle. Keep warnings outside the general event-message slot so other notices do not hide the immediate hazard.

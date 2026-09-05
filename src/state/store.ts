@@ -1,5 +1,5 @@
 import { useSyncExternalStore } from 'react';
-import type { Lane } from '../game/trafficModel.ts';
+import type { Lane, TrafficState } from '../game/trafficModel.ts';
 export interface AppState {
     phase: 'loading' | 'menu' | 'playing';
     loadProgress: number;
@@ -14,6 +14,7 @@ export interface AppState {
     rule: 'normal' | 'rotate';
     message: string;
     closedLane: Lane | null;
+    emergency: TrafficState['emergency'];
     finished: boolean;
     queues: Record<Lane, number>;
 }
@@ -21,7 +22,7 @@ const listeners = new Set<() => void>();
 let state: AppState = {
     phase: 'loading', loadProgress: 0, paused: false, score: 0, best: 0,
     tokens: 0, combo: 0, crashes: 0, cleared: 0, remaining: 120,
-    rule: 'normal', message: '', closedLane: null, finished: false,
+    rule: 'normal', message: '', closedLane: null, finished: false, emergency: null,
     queues: {north: 0, east: 0, south: 0, west: 0},
 };
 export const store = {

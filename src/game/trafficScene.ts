@@ -25,7 +25,7 @@ export function createTrafficScene(app:Application, stage:Stage):Scene {
         const s=model.state;
         const queues={north:0,east:0,south:0,west:0};
         for(const v of s.vehicles) if(v.waiting) queues[v.lane]++;
-        const view={score:s.score,tokens:s.tokens,combo:s.combo,crashes:s.crashes,cleared:s.cleared,remaining:Math.ceil(s.remaining),rule:s.rule,message:s.message,closedLane:s.closedLane,finished:s.finished,queues};
+        const view={score:s.score,tokens:s.tokens,combo:s.combo,crashes:s.crashes,cleared:s.cleared,remaining:Math.ceil(s.remaining),rule:s.rule,message:s.message,closedLane:s.closedLane,finished:s.finished,emergency:s.emergency ? {...s.emergency,seconds:Math.ceil(s.emergency.seconds)} : null,queues};
         const next=JSON.stringify(view);if(next!==signature){signature=next;store.patch(view);}
         if(s.finished&&!recorded){recorded=true;recordBest(s.score);store.patch({best:getSave().best});}
     };
@@ -55,7 +55,9 @@ export function createTrafficScene(app:Application, stage:Stage):Scene {
         signals.clear();
         const points={north:[285,248],east:[472,285],south:[435,472],west:[248,435]};
         for(const lane of lanes){const [x,y]=points[lane];signals.circle(x,y,10).fill(model.state.closedLane===lane?0xff5757:colors[lane]).stroke({width:3,color:0x222234});}
-        caption.text=model.state.closedLane?'NORTH CLOSED · HOLD THAT APPROACH':model.state.rule==='rotate'?'CHECK YOUR MAPPING. YOU KNOW THIS.':'THE CITY IS COUNTING ON YOU.';
+        const emergency=model.state.emergency;
+        if(emergency){const [x,y]=points[emergency.lane];signals.circle(x,y,20).stroke({width:4,color:0xf7e7c1});}
+        caption.text=emergency ? (emergency.kind==='firetruck'?'FIRE TRUCK':'AMBULANCE')+' · '+emergency.lane.toUpperCase()+' · AUTOMATIC' : model.state.closedLane?'NORTH CLOSED · HOLD THAT APPROACH':model.state.rule==='rotate'?'CHECK YOUR MAPPING. YOU KNOW THIS.':'THE CITY IS COUNTING ON YOU.';
     };
     app.ticker.add(tick);
     return {destroy(){if(active===session)active=null;window.removeEventListener('keydown',keydown);app.ticker.remove(tick);offResize();root.destroy({children:true});sprites.clear();}};

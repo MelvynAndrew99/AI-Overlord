@@ -1,4 +1,5 @@
 import { Container, Graphics } from 'pixi.js';
+import { trafficRules } from './trafficRules.ts';
 
 const ink = 0x352c46;
 const cream = 0xf6e5c5;
@@ -78,14 +79,14 @@ export function drawTrafficBoard(): Container {
 }
 
 /** Centered at (0,0), pointing up. Scene applies travel rotation and position. */
-export function drawVehicle(kind: 'car' | 'truck' | 'ambulance', color: number): Container {
+export function drawVehicle(kind: 'car' | 'truck' | 'ambulance' | 'firetruck', color: number): Container {
     const vehicle = new Container();
     const g = new Graphics();
     vehicle.addChild(g);
-    const length = kind === 'truck' ? 68 : 44;
-    const width = 26;
+    const length = trafficRules.vehicles[kind].length;
+    const width = trafficRules.vehicleWidth;
     const half = length / 2;
-    const body = kind === 'ambulance' ? cream : color;
+    const body = kind === 'ambulance' ? cream : kind === 'firetruck' ? 0xe86150 : color;
     g.roundRect(-width / 2 + 3, -half + 4, width, length, 6).fill({ color: 0x130e22, alpha: 0.35 });
     for (const y of [-half + 8, half - 16]) {
         g.roundRect(-width / 2 - 3, y, 7, 10, 2).fill(0x211c2e);
@@ -97,7 +98,14 @@ export function drawVehicle(kind: 'car' | 'truck' | 'ambulance', color: number):
     g.rect(-width / 2 + 7, -half + 9, width - 14, 3).fill(teal);
     g.roundRect(-width / 2 + 3, -half + 2, 6, 4, 1).fill(cream);
     g.roundRect(width / 2 - 9, -half + 2, 6, 4, 1).fill(cream);
-    if (kind === 'truck') {
+    if (kind === 'firetruck') {
+        g.roundRect(-10, -7, 20, 33, 2).fill(ink);
+        g.rect(-8, -5, 3, 29).fill(cream);
+        g.rect(5, -5, 3, 29).fill(cream);
+        for (let y = -3; y < 24; y += 6) g.rect(-5, y, 10, 2).fill(cream);
+        g.rect(-10, -15, 9, 4).fill(0x8bbbd4);
+        g.rect(1, -15, 9, 4).fill(cream);
+    } else if (kind === 'truck') {
         g.roundRect(-width / 2 + 1, -half + 23, width - 2, length - 24, 3).fill(ink);
         g.roundRect(-width / 2 + 3, -half + 25, width - 6, length - 28, 2).fill(0xe2c79f);
         for (let y = -half + 30; y < half - 4; y += 8) {

@@ -66,3 +66,10 @@ Observe behavior before having game design and behavioral science specialists tu
 Premise: "My son and I used AI to build a game about AI replacing us."
 
 For each milestone capture the request, the AI output, the playable result, and the human correction. Record failures and playtest decisions, not only successful generation. First episode: concept to official starter using Nix. Follow with stable traffic, mutation experiments, and token economy behavior. Keep sign-in screens and credentials out of recordings.
+
+## Rhythm and model releases: user proposal for review (2026-09-05)
+
+The user wants to improve game flow through mathematical structure and Tetris-like anticipation. They propose framing progression as new AI model releases, each updating control mechanisms, with satire about perceived model nerfs. This is a direction to evaluate, not an approved implementation or evidence about actual AI products. The user considers the present mechanics a starting point, not a finished good game.
+
+Review pacing, readable upcoming events, transfer of learned skill between models, and whether each control change creates an interesting decision rather than arbitrary frustration. See v0.1/RHYTHM-REVIEW.md for the game-design specialist's recommendations. Economy tuning remains deferred; do not assume a model-release gate is required for deliberate havoc.
+Clarification: mathematical rhythm means fitting mixed vehicle groups into safe crossing gaps (for example two cars followed by a truck), not primarily beat-based arrivals. Lane clearing is a candidate satisfaction mechanic. Model updates provide the story cause for chaos changes; they are not automatically a requirement to replace every control each level. This supersedes the initial reviewer interpretation of a car-only rhythmic-arrival experiment. See the revised section of RHYTHM-REVIEW.md.
