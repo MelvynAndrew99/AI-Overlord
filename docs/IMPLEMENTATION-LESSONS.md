@@ -51,3 +51,12 @@ Record only reusable findings. Avoid transcripts, speculation presented as fact,
 - Limits or uncertainty:
 - Existing entry superseded (if any):
 - Status: proposed / verified / superseded
+
+## v0.1 integration lessons (2026-09-05)
+
+- Verified by model tests: resolve rotated controls at the input boundary once; collision simulation accepts resolved lanes and knows nothing about keyboard labels.
+- Verified by integration review: agree shared board geometry and vehicle footprints before parallel implementation. Renderer bodies now match model dimensions (26x44, trucks26x68); decorative shadows are not collision promises.
+- Verified by code review: reset renderer identities when restarting a fresh simulation; reused IDs must not retain old vehicle art.
+- Verified by story integration: narrative copy must not report unmeasured outcomes. Claude's draft required editing before adoption.
+- Proposed, not audio-tested: keep music's shared palette and motif while escalating rhythmic density rather than volume. Preserve space for gameplay cues and evaluate retry fatigue.
+- Proposed, not playtest-proven: recoverable mistakes and short shifts may encourage mastery. Unit tests prove rules, not enjoyment. Household observations should drive the next balance pass.

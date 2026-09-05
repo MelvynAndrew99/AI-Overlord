@@ -1,42 +1,31 @@
-/**
- * In-game HUD: a React overlay above the Pixi canvas.
- *
- * Pattern to keep: the overlay itself is pointer-events-none so taps fall
- * through to the canvas; each interactive control opts back in with
- * pointer-events-auto. `pt-safe-top` (see app.css) pads below the RUN host
- * header.
- */
 import { store, useStore } from '../state/store.ts';
-import { getSave, recordBest } from '../state/save.ts';
-
+import { sendTrafficInput, clearTrafficContext, restartTraffic } from '../game/trafficScene.ts';
+import type { Lane } from '../game/trafficModel.ts';
+import { story } from '../content/story.ts';
+const directions: Lane[] = ['north','east','south','west'];
+const symbols = {north:'↑', east:'→', south:'↓', west:'←'};
+const keys = {north:'W',east:'D',south:'S',west:'A'};
 export default function Hud() {
-    const score = useStore((s) => s.score);
-    const paused = useStore((s) => s.paused);
-    return (
-        <div className="pointer-events-none absolute inset-0 pt-safe-top">
-            <div className="flex items-start justify-between p-4">
-                {/* ADAPT: demo counter — replace with real HUD (currencies, wave, timer...) */}
-                <div className="rounded-xl bg-black/50 px-4 py-2 text-lg font-bold tabular-nums">
-                    Bounces: {score}
-                </div>
-                <button
-                    type="button"
-                    className="pointer-events-auto rounded-xl bg-black/50 px-4 py-2 text-lg font-bold transition-transform active:scale-95"
-                    onClick={() => {
-                        // ADAPT: demo save mutation — persist the session's
-                        // result wherever your game's session actually ends.
-                        recordBest(store.get().score);
-                        store.patch({ phase: 'menu', best: getSave().best });
-                    }}
-                >
-                    Menu
-                </button>
-            </div>
-            {paused && (
-                <div className="absolute inset-0 flex items-center justify-center bg-black/60">
-                    <p className="text-2xl font-bold">Paused</p>
-                </div>
-            )}
-        </div>
-    );
+    const s = useStore();
+    const seconds = Math.max(0,s.remaining);
+    return <div className="shift-ui">
+        <header className="shift-header">
+            <div className="shift-title"><span className="eyebrow">{story.shift}</span><button className="quiet-button" onClick={()=>store.patch({paused:!s.paused})} aria-label={s.paused?'Resume':'Pause'}>{s.paused?'Resume':'Pause'}</button></div>
+            <div className="stats"><div><small>WORK DONE</small><b>{s.score}</b></div><div><small>TOKENS</small><b>{s.tokens}</b></div><div><small>SHIFT LEFT</small><b>{Math.floor(seconds/60)}:{String(seconds%60).padStart(2,'0')}</b></div></div>
+            <div className="report-strip"><span>{s.combo > 1 ? `${s.combo}× streak` : 'Keep it moving'}</span><span>{s.crashes} incidents</span></div>
+            <p className="memo" aria-live="polite">{s.message || story.opening}</p>
+        </header>
+        <section className="controls" aria-label="Traffic controls">
+            <div className={'rule-strip '+(s.rule==='rotate'?'mutated':'')}><span>{s.rule==='rotate'?'CONTEXT UPDATE: controls rotated clockwise':'Release one car per press'}</span></div>
+            <div className="lane-buttons">{directions.map((input,i)=>{
+                const lane = s.rule==='rotate' ? directions[(i+1)%4] : input;
+                return <button key={input} className={'lane-button lane-'+lane} disabled={s.paused || s.finished || s.closedLane===lane} onClick={()=>sendTrafficInput(input)} aria-label={`Release ${lane} lane`}>
+                    <strong>{symbols[input]} <span>{keys[input]}</span></strong><span>{lane.toUpperCase()}</span><small>{s.closedLane===lane?'CLOSED':`${s.queues[lane]} waiting`}</small>
+                </button>;
+            })}</div>
+            <div className="bottom-actions"><button className="reset-button" disabled={s.rule==='normal'||s.tokens<8||s.paused||s.finished} onClick={clearTrafficContext}>Reset context · 8 tokens</button><button className="quiet-button" onClick={()=>store.patch({phase:'menu',paused:false})}>Exit</button></div>
+        </section>
+        {s.paused && !s.finished && <div className="modal-shade"><div className="result-card"><p className="eyebrow">ON BREAK</p><h2>Take your time.</h2><p>Traffic and the shift clock are paused.</p><button className="primary-button" onClick={()=>store.patch({paused:false})}>Back to work</button></div></div>}
+        {s.finished && <div className="modal-shade"><div className="result-card"><p className="eyebrow">SHIFT REPORT / 0.1</p><h2>{s.crashes<4?story.successTitle:story.messyTitle}</h2><p>{s.crashes<4?story.successBody:story.messyBody}</p><div className="result-stats"><b>{s.cleared}<small>cars cleared</small></b><b>{s.crashes}<small>incidents</small></b><b>{s.score}<small>score</small></b></div><p>{story.future}</p><button className="primary-button" onClick={restartTraffic}>One more shift →</button><button className="quiet-button" onClick={()=>store.patch({phase:'menu',paused:false})}>Clock out</button></div></div>}
+    </div>;
 }

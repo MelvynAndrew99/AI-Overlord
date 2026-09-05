@@ -14,7 +14,7 @@ import RundotGameAPI from '@series-inc/rundot-game-sdk/api';
 import { sdkReady } from '../sdk/runSdk.ts';
 
 // ADAPT: your game's save key — bump the suffix if the shape ever changes.
-const SAVE_KEY = 'ai-overlord:save:v1';
+const SAVE_KEY = 'ai-overlord:traffic:v1';
 
 export interface SaveData {
     /** ADAPT: demo field — best bounce count. Replace with your game's fields. */
